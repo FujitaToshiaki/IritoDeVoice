@@ -18,6 +18,8 @@ export interface IStorage {
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: string, updates: Partial<Product>): Promise<Product | undefined>;
   updateProductStock(id: string, newStock: number): Promise<Product | undefined>;
+  getProductsByLocation(location: string): Promise<Product[]>;
+  getLocations(): Promise<string[]>;
   
   // Transactions
   getTransactions(limit?: number): Promise<InventoryTransaction[]>;
@@ -146,7 +148,7 @@ export class MemStorage implements IStorage {
       ...insertProduct,
       id,
       lastUpdated: new Date(),
-    };
+    } as Product;
     this.products.set(id, product);
     return product;
   }
@@ -164,6 +166,16 @@ export class MemStorage implements IStorage {
     return this.updateProduct(id, { currentStock: newStock });
   }
 
+  async getProductsByLocation(location: string): Promise<Product[]> {
+    return Array.from(this.products.values()).filter(p => p.location === location);
+  }
+
+  async getLocations(): Promise<string[]> {
+    const locations = new Set<string>();
+    this.products.forEach(p => locations.add(p.location));
+    return Array.from(locations);
+  }
+
   async getTransactions(limit = 50): Promise<InventoryTransaction[]> {
     return this.transactions
       .sort((a, b) => (b.timestamp?.getTime() || 0) - (a.timestamp?.getTime() || 0))
@@ -176,7 +188,7 @@ export class MemStorage implements IStorage {
       ...insertTransaction,
       id,
       timestamp: new Date(),
-    };
+    } as InventoryTransaction;
     this.transactions.push(transaction);
     
     // Update today's KPIs
@@ -200,7 +212,7 @@ export class MemStorage implements IStorage {
       ...insertCommand,
       id,
       timestamp: new Date(),
-    };
+    } as VoiceCommand;
     this.voiceCommands.push(command);
     
     // Update voice commands count for today

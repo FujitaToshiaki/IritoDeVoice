@@ -75,6 +75,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get products by location
+  app.get("/api/locations/:location/products", async (req, res) => {
+    try {
+      const products = await storage.getProductsByLocation(req.params.location);
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch products for location" });
+    }
+  });
+
+  // Get list of locations
+  app.get("/api/locations", async (req, res) => {
+    try {
+      const locations = await storage.getLocations();
+      res.json({ locations });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch locations" });
+    }
+  });
+
   // Get product by code
   app.get("/api/products/code/:code", async (req, res) => {
     try {

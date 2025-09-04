@@ -2,16 +2,22 @@ import { PackageIcon, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import VoiceDisplay from "@/components/voice-display";
 import { Link } from "wouter";
+import { useState } from "react";
 
 export default function VoiceInput() {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleClose = () => setIsOpen(false);
+  const handleOpen = () => setIsOpen(true);
+
   return (
     <div className="max-w-md mx-auto gradient-bg min-h-screen relative overflow-hidden">
       {/* Header */}
       <header className="flex items-center justify-between p-6 pt-16 text-white" data-testid="voice-header">
         <div className="flex items-center space-x-4">
           <Link href="/">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30 text-white hover:bg-white/30"
               data-testid="back-button"
@@ -31,7 +37,16 @@ export default function VoiceInput() {
 
       {/* Main Content */}
       <div className="px-6 pb-6">
-        <VoiceDisplay />
+        {!isOpen && (
+          <Button
+            onClick={handleOpen}
+            className="w-full bg-primary text-white py-3 rounded-xl font-medium"
+            data-testid="voice-start-button"
+          >
+            音声入力開始
+          </Button>
+        )}
+        <VoiceDisplay isOpen={isOpen} onClose={handleClose} />
       </div>
     </div>
   );

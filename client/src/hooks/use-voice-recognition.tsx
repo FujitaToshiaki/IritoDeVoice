@@ -1,5 +1,14 @@
 import { useState, useRef, useCallback } from 'react';
 
+// Minimal type declarations for speech recognition
+type SpeechRecognition = any;
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 interface UseVoiceRecognitionProps {
   onResult: (transcript: string, confidence?: number) => void;
   onEnd: () => void;
@@ -47,7 +56,7 @@ export function useVoiceRecognition({
       setIsListening(true);
     };
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       let interimTranscript = '';
       let latestConfidence = 0;
 
@@ -68,7 +77,7 @@ export function useVoiceRecognition({
       onResult(currentTranscript, latestConfidence);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
       onError(`Speech recognition error: ${event.error}`);
