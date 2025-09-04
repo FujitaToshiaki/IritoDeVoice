@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Mic, MicOff, Volume2, Trash2 } from "lucide-react";
+import { Mic, MicOff, Volume2, Trash2, X } from "lucide-react";
 import { useVoiceRecognition } from "@/hooks/use-voice-recognition";
 
 interface VoiceEntry {
@@ -12,7 +12,12 @@ interface VoiceEntry {
   confidence?: number;
 }
 
-export default function VoiceDisplay() {
+interface VoiceDisplayProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function VoiceDisplay({ isOpen, onClose }: VoiceDisplayProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [currentTranscript, setCurrentTranscript] = useState("");
   const [voiceHistory, setVoiceHistory] = useState<VoiceEntry[]>([]);
@@ -78,25 +83,38 @@ export default function VoiceDisplay() {
     return "text-red-600 bg-red-100";
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Card className="bg-white rounded-3xl p-6 shadow-xl border-0" data-testid="voice-display">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-900" data-testid="voice-display-title">
-          音声入力・表示
-        </h3>
-        {voiceHistory.length > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearHistory}
-            className="text-gray-500 hover:text-red-600"
-            data-testid="clear-history-button"
-          >
-            <Trash2 size={16} />
-            <span className="ml-1">履歴削除</span>
-          </Button>
-        )}
-      </div>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50" data-testid="voice-modal-overlay">
+      <Card className="bg-white rounded-3xl p-6 shadow-xl border-0 max-w-sm w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col" data-testid="voice-display">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900" data-testid="voice-display-title">
+            音声入力・表示
+          </h3>
+          <div className="flex items-center space-x-2">
+            {voiceHistory.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearHistory}
+                className="text-gray-500 hover:text-red-600"
+                data-testid="clear-history-button"
+              >
+                <Trash2 size={16} />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+              data-testid="close-modal-button"
+            >
+              <X size={20} />
+            </Button>
+          </div>
+        </div>
 
       {/* 音声入力コントロール */}
       <div className="flex items-center justify-center mb-6">
@@ -138,8 +156,8 @@ export default function VoiceDisplay() {
       )}
 
       {/* 音声入力履歴 */}
-      <div className="space-y-3" data-testid="voice-history">
-        <div className="flex items-center justify-between">
+      <div className="flex-1 overflow-hidden flex flex-col" data-testid="voice-history">
+        <div className="flex items-center justify-between mb-3">
           <h4 className="text-lg font-semibold text-gray-800">入力履歴</h4>
           <Badge variant="secondary" className="text-xs" data-testid="history-count">
             {voiceHistory.length}件
@@ -147,15 +165,15 @@ export default function VoiceDisplay() {
         </div>
         
         {voiceHistory.length === 0 ? (
-          <div className="text-center py-8 text-gray-400" data-testid="no-history">
-            <Volume2 className="mx-auto mb-2 text-gray-300" size={32} />
-            <p>まだ音声入力がありません</p>
-            <p className="text-sm">上のマイクボタンを押して話してみてください</p>
+          <div className="text-center py-6 text-gray-400 flex-1 flex flex-col justify-center" data-testid="no-history">
+            <Volume2 className="mx-auto mb-2 text-gray-300" size={28} />
+            <p className="text-sm">まだ音声入力がありません</p>
+            <p className="text-xs">マイクボタンを押して話してみてください</p>
           </div>
         ) : (
-          <div className="max-h-96 overflow-y-auto space-y-3" data-testid="history-list">
+          <div className="flex-1 overflow-y-auto space-y-3" data-testid="history-list">
             {voiceHistory.map((entry, index) => (
-              <Card key={entry.id} className="bg-gray-50 border-0 rounded-2xl p-4" data-testid={`history-item-${index}`}>
+              <Card key={entry.id} className="bg-gray-50 border-0 rounded-2xl p-3" data-testid={`history-item-${index}`}>
                 <div className="flex items-start justify-between mb-2">
                   <span className="text-xs text-gray-500 font-medium" data-testid={`history-time-${index}`}>
                     {formatTime(entry.timestamp)}
@@ -183,6 +201,7 @@ export default function VoiceDisplay() {
           お使いのブラウザは音声認識に対応していません
         </div>
       )}
-    </Card>
+      </Card>
+    </div>
   );
 }
