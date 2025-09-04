@@ -20,6 +20,7 @@ export interface IStorage {
   updateProductStock(id: string, newStock: number): Promise<Product | undefined>;
   getProductsByLocation(location: string): Promise<Product[]>;
   getLocations(): Promise<string[]>;
+  getProductStocks(code: string, locations?: string[]): Promise<Product[]>;
   
   // Transactions
   getTransactions(limit?: number): Promise<InventoryTransaction[]>;
@@ -103,10 +104,22 @@ export class MemStorage implements IStorage {
         id: "5",
         name: "ビジネススーツ L",
         code: "SUIT-BIZ-L",
-        category: "衣料品", 
+        category: "衣料品",
         currentStock: 45,
         minStock: 15,
         maxStock: 100,
+        unit: "個",
+        location: "B区域",
+        lastUpdated: new Date(),
+      },
+      {
+        id: "6",
+        name: "iPhone 14 Pro",
+        code: "IPH14P-256",
+        category: "電子機器",
+        currentStock: 5,
+        minStock: 50,
+        maxStock: 500,
         unit: "個",
         location: "B区域",
         lastUpdated: new Date(),
@@ -174,6 +187,12 @@ export class MemStorage implements IStorage {
     const locations = new Set<string>();
     this.products.forEach(p => locations.add(p.location));
     return Array.from(locations);
+  }
+
+  async getProductStocks(code: string, locations?: string[]): Promise<Product[]> {
+    return Array.from(this.products.values()).filter(
+      p => p.code === code && (!locations || locations.includes(p.location))
+    );
   }
 
   async getTransactions(limit = 50): Promise<InventoryTransaction[]> {

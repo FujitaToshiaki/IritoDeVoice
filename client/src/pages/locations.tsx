@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin, Home, Users, Package, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 
@@ -11,12 +13,44 @@ interface LocationsResponse {
 
 export default function Locations() {
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [productCode, setProductCode] = useState("");
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [stockResults, setStockResults] = useState<{ location: string; stock: number }[] | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
 
   const { data, isLoading } = useQuery<LocationsResponse>({
     queryKey: ["/api/locations"],
   });
 
   const locations = data?.locations || [];
+
+  const toggleLocation = (location: string) => {
+    setSelectedLocations(prev =>
+      prev.includes(location)
+        ? prev.filter(l => l !== location)
+        : [...prev, location]
+    );
+  };
+
+  const checkStock = async () => {
+    if (!productCode) return;
+    setIsChecking(true);
+    setStockResults(null);
+    try {
+      const params = selectedLocations.length
+        ? `?locations=${selectedLocations.join(',')}`
+        : '';
+      const res = await fetch(`/api/products/code/${productCode}/stocks${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setStockResults(data.stocks);
+      } else {
+        setStockResults([]);
+      }
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   const getLocationIcon = (locationName: string) => {
     // Simple logic to assign icons based on location name
@@ -49,6 +83,55 @@ export default function Locations() {
           </div>
         </div>
       </header>
+
+      {/* Stock Check */}
+      <div className="px-6 py-4" data-testid="stock-check">
+        <Card className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-3xl">
+          <CardContent className="p-6 space-y-4">
+            <h3 className="text-white font-semibold text-lg">他拠点在庫確認</h3>
+            <Input
+              placeholder="商品コードを入力"
+              value={productCode}
+              onChange={(e) => setProductCode(e.target.value)}
+              className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+            />
+            <div className="flex flex-wrap gap-2">
+              {locations.map((loc) => (
+                <label key={loc} className="flex items-center space-x-2 text-white">
+                  <Checkbox
+                    checked={selectedLocations.includes(loc)}
+                    onCheckedChange={() => toggleLocation(loc)}
+                    className="border-white/50"
+                  />
+                  <span>{loc}</span>
+                </label>
+              ))}
+            </div>
+            <Button
+              onClick={checkStock}
+              disabled={isChecking || !productCode}
+              variant="secondary"
+              className="w-full bg-white/20 hover:bg-white/30 text-white border-0"
+            >
+              在庫確認
+            </Button>
+            {stockResults && (
+              <div className="space-y-2 text-white/90">
+                {stockResults.length === 0 ? (
+                  <p>在庫情報が見つかりません</p>
+                ) : (
+                  stockResults.map((s) => (
+                    <div key={s.location} className="flex justify-between">
+                      <span>{s.location}</span>
+                      <span>{s.stock}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Locations List */}
       <div className="px-6 py-4 space-y-4" data-testid="locations-list">
