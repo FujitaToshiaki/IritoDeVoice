@@ -108,6 +108,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get stock across locations for a product code
+  app.get("/api/products/code/:code/stocks", async (req, res) => {
+    try {
+      const locQuery = req.query.locations;
+      const locations = typeof locQuery === 'string' ? locQuery.split(',') : undefined;
+      const stocks = await storage.getProductStocks(req.params.code, locations);
+      res.json({ stocks: stocks.map(p => ({ location: p.location, stock: p.currentStock })) });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch product stocks" });
+    }
+  });
+
   // Create inventory transaction
   app.post("/api/transactions", async (req, res) => {
     try {
