@@ -72,7 +72,8 @@ export default function VoiceRecorder({ isRecording, onStart, onEnd }: VoiceReco
         variant: "destructive",
       });
       handleStop();
-    }
+    },
+    continuous: true,
   });
 
   const handleStart = () => {
