@@ -10,11 +10,12 @@ import LowStockAlerts from "@/components/low-stock-alerts";
 import RecentActivity from "@/components/recent-activity";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
 
 export default function Dashboard() {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   
-  const { data: dashboardData, isLoading, refetch } = useQuery({
+  const { data: dashboardData, isLoading, refetch } = useQuery<any>({
     queryKey: ["/api/dashboard"],
     refetchInterval: 30000, // Refetch every 30 seconds
   });
@@ -54,7 +55,9 @@ export default function Dashboard() {
           </div>
           <div>
             <h1 className="text-xl font-bold" data-testid="app-title">IritoDeVoice</h1>
-            <p className="text-sm opacity-90" data-testid="location">東京倉庫A</p>
+            <Link href="/locations">
+              <p className="text-sm opacity-90 underline" data-testid="location">東京倉庫A</p>
+            </Link>
           </div>
         </div>
         <div className="flex items-center space-x-3">

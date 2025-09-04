@@ -5,10 +5,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import NotFound from "@/pages/not-found";
+import VoiceInput from "@/pages/voice-input";
+import Locations from "@/pages/locations";
 
 function Router() {
   return (
     <Switch>
+      <Route path="/voice" component={VoiceInput} />
+      <Route path="/locations" component={Locations} />
       <Route path="/" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
