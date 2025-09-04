@@ -46,7 +46,8 @@ export default function VoiceDisplay({ isOpen, onClose }: VoiceDisplayProps) {
       console.error("音声認識エラー:", error);
       setIsRecording(false);
       setCurrentTranscript("");
-    }
+    },
+    continuous: true,
   });
 
   const handleStartRecording = () => {
