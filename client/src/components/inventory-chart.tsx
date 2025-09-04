@@ -95,11 +95,11 @@ export default function InventoryChart({ data = [] }: InventoryChartProps) {
   };
 
   return (
-    <Card className="bg-white rounded-2xl p-6 shadow-lg mb-6 card-hover" data-testid="inventory-chart">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-card-foreground" data-testid="chart-title">在庫推移</h3>
+    <Card className="bg-white rounded-3xl p-6 shadow-xl mb-8 border-0 card-hover" data-testid="inventory-chart">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-gray-900" data-testid="chart-title">在庫推移</h3>
         <Select defaultValue="week" data-testid="chart-timeframe-select">
-          <SelectTrigger className="w-24 text-sm">
+          <SelectTrigger className="w-28 text-sm bg-gray-50 border-0 rounded-2xl">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -109,11 +109,11 @@ export default function InventoryChart({ data = [] }: InventoryChartProps) {
           </SelectContent>
         </Select>
       </div>
-      <div className="relative h-48 w-full" data-testid="chart-container">
+      <div className="relative h-52 w-full" data-testid="chart-container">
         {data.length > 0 ? (
           <Line data={chartData} options={options} />
         ) : (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
+          <div className="flex items-center justify-center h-full text-gray-400">
             データなし
           </div>
         )}

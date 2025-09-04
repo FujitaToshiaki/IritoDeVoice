@@ -58,8 +58,8 @@ export default function CategoryChart({ data = [] }: CategoryChartProps) {
   ];
 
   return (
-    <Card className="bg-white rounded-2xl p-6 shadow-lg mb-6 card-hover" data-testid="category-chart">
-      <h3 className="text-lg font-semibold text-card-foreground mb-4" data-testid="category-title">カテゴリ別在庫</h3>
+    <Card className="bg-white rounded-3xl p-6 shadow-xl mb-8 border-0 card-hover" data-testid="category-chart">
+      <h3 className="text-xl font-bold text-gray-900 mb-6" data-testid="category-title">カテゴリ別在庫</h3>
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
           <div className="w-full h-32" data-testid="category-doughnut-chart">

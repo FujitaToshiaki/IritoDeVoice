@@ -50,8 +50,8 @@ export default function RecentActivity({ data = [] }: RecentActivityProps) {
   };
 
   return (
-    <Card className="bg-white rounded-2xl p-6 shadow-lg mb-6 card-hover" data-testid="recent-activity">
-      <h3 className="text-lg font-semibold text-card-foreground mb-4" data-testid="activity-title">最近の活動</h3>
+    <Card className="bg-white rounded-3xl p-6 shadow-xl mb-8 border-0 card-hover" data-testid="recent-activity">
+      <h3 className="text-xl font-bold text-gray-900 mb-6" data-testid="activity-title">最近の活動</h3>
       
       <div className="space-y-4" data-testid="activity-list">
         {data.length === 0 ? (

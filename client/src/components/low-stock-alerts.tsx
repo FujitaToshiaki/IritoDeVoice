@@ -22,10 +22,10 @@ export default function LowStockAlerts({ data = [] }: LowStockAlertsProps) {
   };
 
   return (
-    <Card className="bg-white rounded-2xl p-6 shadow-lg mb-6 card-hover" data-testid="low-stock-alerts">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-card-foreground" data-testid="alerts-title">在庫不足アラート</h3>
-        <Badge className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full font-medium" data-testid="alerts-count">
+    <Card className="bg-white rounded-3xl p-6 shadow-xl mb-8 border-0 card-hover" data-testid="low-stock-alerts">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-gray-900" data-testid="alerts-title">在庫不足アラート</h3>
+        <Badge className="bg-red-100 text-red-600 text-sm px-3 py-1.5 rounded-full font-semibold" data-testid="alerts-count">
           {data.length}件
         </Badge>
       </div>
