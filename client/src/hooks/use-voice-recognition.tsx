@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 
 interface UseVoiceRecognitionProps {
-  onResult: (transcript: string) => void;
+  onResult: (transcript: string, confidence?: number) => void;
   onEnd: () => void;
   onError: (error: string) => void;
   lang?: string;
@@ -49,18 +49,23 @@ export function useVoiceRecognition({
 
     recognition.onresult = (event) => {
       let interimTranscript = '';
+      let latestConfidence = 0;
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
+        const confidence = event.results[i][0].confidence;
+        
         if (event.results[i].isFinal) {
           finalTranscript += transcript;
+          latestConfidence = confidence;
         } else {
           interimTranscript += transcript;
+          latestConfidence = confidence;
         }
       }
 
       const currentTranscript = finalTranscript + interimTranscript;
-      onResult(currentTranscript);
+      onResult(currentTranscript, latestConfidence);
     };
 
     recognition.onerror = (event) => {

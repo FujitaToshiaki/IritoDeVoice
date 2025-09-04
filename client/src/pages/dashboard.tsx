@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PackageIcon, Bell, Home, BarChart3, Mic, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import VoiceRecorder from "@/components/voice-recorder";
+import { Link } from "wouter";
 import InventoryChart from "@/components/inventory-chart";
 import CategoryChart from "@/components/category-chart";
 import KpiCards from "@/components/kpi-cards";
@@ -12,9 +12,6 @@ import { useWebSocket } from "@/hooks/use-websocket";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
-  const [isVoiceRecording, setIsVoiceRecording] = useState(false);
-  const [voiceStatus, setVoiceStatus] = useState("音声認識待機中");
-  
   const { data: dashboardData, isLoading, refetch } = useQuery({
     queryKey: ["/api/dashboard"],
     refetchInterval: 30000, // Refetch every 30 seconds
@@ -28,16 +25,6 @@ export default function Dashboard() {
       }
     }
   });
-
-  const handleVoiceStart = () => {
-    setIsVoiceRecording(true);
-    setVoiceStatus("音声認識中...");
-  };
-
-  const handleVoiceEnd = () => {
-    setIsVoiceRecording(false);
-    setVoiceStatus("音声認識待機中");
-  };
 
   if (isLoading) {
     return (
@@ -78,11 +65,13 @@ export default function Dashboard() {
       {/* Voice Status Indicator */}
       <div className="px-6 mb-6">
         <Card className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-3xl p-5 flex items-center space-x-4" data-testid="voice-status">
-          <div className={`w-4 h-4 rounded-full ${isVoiceRecording ? 'bg-red-400' : 'bg-green-400'} shadow-lg`}></div>
-          <span className="text-white text-base font-medium flex-1" data-testid="voice-status-text">{voiceStatus}</span>
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <Mic className="text-white" />
-          </div>
+          <div className="w-4 h-4 rounded-full bg-green-400 shadow-lg"></div>
+          <span className="text-white text-base font-medium flex-1" data-testid="voice-status-text">音声入力機能有効</span>
+          <Link href="/voice">
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+              <Mic className="text-white" />
+            </div>
+          </Link>
         </Card>
       </div>
 
@@ -104,12 +93,6 @@ export default function Dashboard() {
         <RecentActivity data={dashboardData?.recentTransactions} />
       </div>
 
-      {/* Voice Recording Component */}
-      <VoiceRecorder
-        isRecording={isVoiceRecording}
-        onStart={handleVoiceStart}
-        onEnd={handleVoiceEnd}
-      />
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white rounded-t-3xl shadow-2xl border-0" data-testid="bottom-navigation">
@@ -122,13 +105,14 @@ export default function Dashboard() {
             <BarChart3 className="text-xl" />
             <span className="text-xs font-medium">分析</span>
           </Button>
-          <Button
-            onClick={handleVoiceStart}
-            className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-500 rounded-3xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform"
-            data-testid="voice-record-button"
-          >
-            <Mic className="text-white text-2xl" />
-          </Button>
+          <Link href="/voice">
+            <Button
+              className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-500 rounded-3xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform"
+              data-testid="voice-record-button"
+            >
+              <Mic className="text-white text-2xl" />
+            </Button>
+          </Link>
           <Button variant="ghost" className="flex flex-col items-center space-y-1 text-gray-400 p-2" data-testid="nav-notifications">
             <Bell className="text-xl" />
             <span className="text-xs font-medium">通知</span>
