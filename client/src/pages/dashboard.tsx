@@ -115,10 +115,12 @@ export default function Dashboard() {
             <Home className="text-xl" />
             <span className="text-xs font-semibold">ホーム</span>
           </Button>
-          <Button variant="ghost" className="flex flex-col items-center space-y-1 text-gray-400 p-2" data-testid="nav-analytics">
-            <BarChart3 className="text-xl" />
-            <span className="text-xs font-medium">分析</span>
-          </Button>
+          <Link href="/reorder">
+            <Button variant="ghost" className="flex flex-col items-center space-y-1 text-gray-400 p-2" data-testid="nav-analytics">
+              <BarChart3 className="text-xl" />
+              <span className="text-xs font-medium">分析</span>
+            </Button>
+          </Link>
           <Button
             onClick={handleOpenVoiceModal}
             className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-500 rounded-3xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform"
