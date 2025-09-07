@@ -40,6 +40,26 @@ npm start
 - Tailwind CSS
 - TypeScript
 
+## 在庫平準化シミュレーション
+`shared/inventory-simulation.ts` には複数倉庫間の在庫を平均化するシミュレーション関数 `simulateInventoryBalancing` が含まれています。
+簡単な使用例は以下の通りです。
+
+```ts
+import { simulateInventoryBalancing } from "@shared/inventory-simulation";
+
+const history = simulateInventoryBalancing(
+  [
+    { name: "Tokyo", inventory: 120 },
+    { name: "Osaka", inventory: 80 },
+    { name: "Fukuoka", inventory: 50 },
+  ],
+  { Tokyo: 20, Osaka: 10, Fukuoka: 5 },
+  3,
+);
+
+console.log(history);
+```
+
 ## ディレクトリ構造
 ```text
 .
